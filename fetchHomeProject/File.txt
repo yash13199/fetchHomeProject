@@ -1,0 +1,24 @@
+func loadImage(from url: String, completion: @escaping (UIImage?) -> Void) {
+    guard let imageURL = URL(string: url) else {
+        completion(nil)  // Return nil if the URL is invalid
+        return
+    }
+    
+    // Fetch the image data asynchronously
+    DispatchQueue.global().async {
+        do {
+            let data = try Data(contentsOf: imageURL)
+            let image = UIImage(data: data)
+            
+            // Once the image is fetched, call the completion handler on the main thread
+            DispatchQueue.main.async {
+                completion(image)
+            }
+        } catch {
+            print("Error loading image: \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                completion(nil)  // Return nil if there was an error
+            }
+        }
+    }
+}
